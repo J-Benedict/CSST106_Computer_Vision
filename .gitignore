@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+runs/
+assets/.ultralytics_cfg/
+assets/.yolo_runs/
+*.tmp
+.DS_Store
+Thumbs.db
+LAB_REPORT.md

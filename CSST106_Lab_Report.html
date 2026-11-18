@@ -1,0 +1,786 @@
+<!DOCTYPE html><html lang='en'><head><meta charset='utf-8'>
+<title>CSST106 Computer Vision Laboratory Report (Labs 1–7)</title>
+<style>body{font-family:Segoe UI,Arial,sans-serif;max-width:980px;margin:24px auto;line-height:1.55;color:#1b1f23;padding:0 16px;}
+h1,h2{color:#0f3d68;border-bottom:1px solid #d0d7de;padding-bottom:6px;}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13px;}
+th,td{border:1px solid #c7d0d9;padding:6px 10px;text-align:left;} th{background:#f0f4f8;}
+.callout{background:#eef6ff;border-left:4px solid #1f6feb;padding:10px 14px;margin:12px 0;font-weight:600;}
+figure{margin:16px 0;text-align:center;} figure img{max-width:100%;border:1px solid #d0d7de;border-radius:4px;}
+@media print{.lab-section{page-break-after:always;}}</style></head><body>
+<h1>CSST106: Computer Vision and Perception — Laboratory Report (Labs 1 – 7)</h1>
+<p><strong>Course:</strong> CSST106 | <strong>Term:</strong> 1st Semester, AY 2026–2027 | <strong>College of Computer Studies</strong></p>
+<section class='lab-section'>
+<h2>Laboratory Activity 1: Introduction to Computer Vision &amp; Image Manipulation</h2>
+<table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Field</th>
+      <th>Details</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Course</td>
+      <td>CSST106: Computer Vision and Perception</td>
+    </tr>
+    <tr>
+      <td>Laboratory Activity</td>
+      <td>Lab Exercise No. 1 – Image Manipulation</td>
+    </tr>
+    <tr>
+      <td>Week Number</td>
+      <td>Week 1 – 2</td>
+    </tr>
+    <tr>
+      <td>Term / Academic Year</td>
+      <td>1st Semester, AY 2026–2027</td>
+    </tr>
+  </tbody>
+</table>
+<h3>Objective</h3><p>To familiarize students with the concept of computer vision, understand how digital images are represented as 2D/3D arrays of pixel intensity values, differentiate OpenCV BGR vs. RGB color ordering, inspect and modify individual pixels, and perform basic image manipulation operations (ROI cropping, resizing, and rotation) using Python and OpenCV.</p>
+<h3>Algorithms &amp; Procedure</h3><ol>
+<li>Load the bundled color test scene (assets/samples/lab1_color_scene.png) using cv2.imread() and inspect its array dimensions (Height, Width, Channels) and uint8 data type.</li>
+<li>Demonstrate OpenCV&#x27;s BGR channel ordering by splitting B, G, and R color planes via cv2.split() and contrasting proper BGR→RGB conversion (cv2.cvtColor(img, cv2.COLOR_BGR2RGB)) against raw un-converted BGR rendering.</li>
+<li>Convert the color image to 2D single-channel Grayscale using cv2.cvtColor(img, cv2.COLOR_BGR2GRAY).</li>
+<li>Use the Web UI Interactive Pixel Explorer sliders to inspect [B, G, R], [R, G, B], and grayscale intensity at (x=480, y=90), then overwrite a 25×25 pixel patch with RGB [255, 215, 0].</li>
+<li>Execute Part 2 manipulation operations: array slicing ROI crop img[y1:y2, x1:x2], resizing at 50% scale with cv2.INTER_LINEAR, and geometric rotation by 90° clockwise via cv2.rotate().</li>
+</ol>
+<div class='callout'>&gt; **[PASTE WEB UI SCREENSHOT HERE: Lab 1 – Navigate to &#x27;Lab 1: Image Manipulation&#x27; tab in the Web UI and capture the Original RGB vs. Raw BGR vs. Grayscale panels, split B/G/R channels, Pixel Explorer table, and Part 2 Crop/Resize/Rotate outputs]**</div>
+<h3>Results &amp; Observations</h3><p>On the default `640×480` color scene (`(480, 640, 3)`), splitting channels clearly revealed pure Red swatches illuminating only the Red channel while appearing zero in Blue/Green, whereas un-converted BGR rendering visibly swapped red and blue regions. Overwriting the `25×25` patch around `(480, 90)` updated pixel intensities live, and ROI slicing, `50%` bilinear downscaling, and `90°` clockwise rotation updated output dimensions cleanly.</p>
+<p><strong>Lab 1 Quantitative Measurements</strong></p>
+<table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Operation / Property</th>
+      <th>Result</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Original Image Shape</td>
+      <td>(480, 640, 3) (H×W×C)</td>
+    </tr>
+    <tr>
+      <td>Inspected Pixel (x=480, y=90)</td>
+      <td>BGR=[167, 167, 255] | RGB=[255, 167, 167] | Gray=193</td>
+    </tr>
+    <tr>
+      <td>Modified Patch Size &amp; Color</td>
+      <td>25×25 px overwritten to RGB [255, 215, 0]</td>
+    </tr>
+    <tr>
+      <td>Cropped ROI Bounds (x1, y1, x2, y2)</td>
+      <td>(20, 60, 400, 440) → Shape (380, 380, 3)</td>
+    </tr>
+    <tr>
+      <td>Resized (50%, INTER_LINEAR)</td>
+      <td>Shape (240, 320, 3)</td>
+    </tr>
+    <tr>
+      <td>Rotated (90° Clockwise)</td>
+      <td>Shape (640, 480, 3)</td>
+    </tr>
+  </tbody>
+</table>
+<figure><img src='assets/report_figures/lab1_summary.png' alt='Lab 1 Visual Outputs Summary'><figcaption>Lab 1 Visual Outputs Summary</figcaption></figure>
+<h3>Post-Lab Questions &amp; Answers</h3>
+<p><strong>1. How are digital images represented as 2D and 3D arrays in Computer Vision?</strong></p><p>A grayscale image is a 2D matrix of shape `(Height, Width)` where each cell stores a single `uint8` luminance value in `[0, 255]` (`0` = black, `255` = white). A color image is a 3D tensor of shape `(Height, Width, 3)` stacking three 2D intensity planes. NumPy indexes rows (`y`, height) first and columns (`x`, width) second (`img[y, x]`).</p>
+<p><strong>2. Why does OpenCV use BGR channel ordering and how do color spaces differ?</strong></p><p>OpenCV historically adopted BGR (Blue, Green, Red) ordering to match early Windows/camera hardware buffers, whereas Matplotlib, Pillow, and Streamlit display RGB. Failing to convert BGR→RGB swaps red and blue hues. Converting BGR to Grayscale (`Y = 0.299R + 0.587G + 0.114B`) collapses 3 channels into 1 luminance plane, reducing memory and compute cost by 3× when hue is unnecessary.</p>
+<p><strong>3. What are real-life applications of basic image representation and manipulation?</strong></p><p>Medical imaging (ROI isolation and resizing of X-ray/MRI scans), autonomous driving (camera calibration, lane ROI cropping, and resolution normalization), automated manufacturing inspection (pixel-level defect localization), and document digitization (orientation correction and contrast prep).</p>
+<h3>Conclusion</h3><p>Digital images function as structured multi-dimensional numerical matrices whose pixel values and color channel layouts can be inspected, sliced, rescaled, and rotated deterministically with OpenCV, establishing the essential data representation foundation for filtering, edge detection, and deep vision pipelines.</p>
+</section>
+<section class='lab-section'>
+<h2>Laboratory Activity 2 (Manual Exercise 3): Edge Detection Technique</h2>
+<table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Field</th>
+      <th>Details</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Course</td>
+      <td>CSST106: Computer Vision and Perception</td>
+    </tr>
+    <tr>
+      <td>Laboratory Activity</td>
+      <td>Lab Activity 2 (Manual Exercise 3) – Edge Detection Technique</td>
+    </tr>
+    <tr>
+      <td>Week Number</td>
+      <td>Week 3 – 4</td>
+    </tr>
+    <tr>
+      <td>Term / Academic Year</td>
+      <td>1st Semester, AY 2026–2027</td>
+    </tr>
+  </tbody>
+</table>
+<h3>Objective</h3><p>To understand and implement fundamental edge detection algorithms using Python and OpenCV — specifically the Sobel gradient operator and the Canny multi-stage edge detector — apply Gaussian noise-reduction preprocessing, and compare the resulting edge maps to prepare for object detection, segmentation, and feature extraction.</p>
+<h3>Algorithms &amp; Procedure</h3><ol>
+<li>Load the test image (assets/samples/lab2_architecture_edges.png, 768×512) and convert it to single-channel grayscale.</li>
+<li>Apply Gaussian smoothing (cv2.GaussianBlur(gray, (3, 3), 0)) to attenuate high-frequency pixel noise before numerical differentiation.</li>
+<li>Compute horizontal (dx=1, dy=0) and vertical (dx=0, dy=1) Sobel derivatives in 64-bit floating-point precision (cv2.CV_64F, ksize=3) to preserve both positive and negative intensity slopes.</li>
+<li>Combine directional gradients via Euclidean magnitude cv2.magnitude(sobelx, sobely) and normalize safely to uint8 [0, 255] via cv2.convertScaleAbs() / min-max scaling for display.</li>
+<li>Compute binary thin edges using cv2.Canny(img_blur, 100, 200) with interactive threshold sliders and record edge pixel density and execution latency.</li>
+</ol>
+<div class='callout'>&gt; **[PASTE WEB UI SCREENSHOT HERE: Lab 2 – Navigate to &#x27;Lab 2: Edge Detection (Sobel &amp; Canny)&#x27; tab and capture Original, Gaussian Blur, Sobel X, Sobel Y, Sobel Combined Magnitude, Canny Edges, and the Quantitative Metrics Table]**</div>
+<h3>Results &amp; Observations</h3><p>On the default `768×512` test image (`393,216` pixels), Sobel Combined produced continuous thick gradient-strength ridges with peak magnitude `675.4` and mean gradient `44.55` in `3.31 ms`, whereas Canny `(100, 200)` extracted crisp 1-pixel binary contours covering `13,979` edge pixels (`3.56%` density) in `1.87 ms`.</p>
+<p><strong>Lab 2 Edge Detector Quantitative Metrics</strong></p>
+<table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Detector</th>
+      <th>Kernel / Thresholds</th>
+      <th>Edge / High-Grad Pixels</th>
+      <th>Edge Coverage (%)</th>
+      <th>Mean Intensity</th>
+      <th>Execution Time (ms)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Sobel Combined (Gradient Magnitude)</td>
+      <td>ksize=3, CV_64F</td>
+      <td>36887</td>
+      <td>9.38</td>
+      <td>16.49</td>
+      <td>3.306</td>
+    </tr>
+    <tr>
+      <td>Canny Edge Detector</td>
+      <td>low=100, high=200</td>
+      <td>13979</td>
+      <td>3.56</td>
+      <td>9.07</td>
+      <td>1.865</td>
+    </tr>
+  </tbody>
+</table>
+<figure><img src='assets/report_figures/lab2_summary.png' alt='Lab 2 Sobel vs. Canny Edge Detection Comparison'><figcaption>Lab 2 Sobel vs. Canny Edge Detection Comparison</figcaption></figure>
+<h3>Post-Lab Questions &amp; Answers</h3>
+<p><strong>1. Explain the differences between the edge maps produced by Sobel and Canny edge detection.</strong></p><p>The **Sobel operator** evaluates local first-order partial derivatives (`Gx` and `Gy`) using 3×3 convolution kernels and outputs a continuous grayscale gradient magnitude map (`√(Gx² + Gy²)`). Its edges are thicker, vary smoothly in intensity, remain sensitive to textured noise, and require a manual threshold to turn into binary contours. In contrast, **Canny edge detection** builds on smoothed gradients with two extra refinement stages: (1) **Non-Maximum Suppression (NMS)**, which suppresses non-peak gradient pixels perpendicular to the edge direction to yield crisp **1-pixel-thin ridges**, and (2) **Hysteresis Double Thresholding** (`low=100`, `high=200`), which preserves weak edge pixels only when connected to strong edges (`&gt; 200`). Consequently, Canny produces clean, continuous, binary object outlines with minimal isolated speckle noise.</p>
+<h3>Conclusion</h3><p>Comparing Sobel and Canny demonstrates the trade-off between raw directional gradient strength (Sobel, useful when edge magnitude or orientation weights are needed) and clean topological contour extraction (Canny, optimal for downstream shape analysis, Hough transforms, and contour-based segmentation).</p>
+</section>
+<section class='lab-section'>
+<h2>Laboratory Activity 3: Histogram Equalization and Contrast Adjustment</h2>
+<table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Field</th>
+      <th>Details</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Course</td>
+      <td>CSST106: Computer Vision and Perception</td>
+    </tr>
+    <tr>
+      <td>Laboratory Activity</td>
+      <td>Lab Exercise No. 3 – Histogram Equalization and Contrast Adjustment</td>
+    </tr>
+    <tr>
+      <td>Week Number</td>
+      <td>Week 4 – 5</td>
+    </tr>
+    <tr>
+      <td>Term / Academic Year</td>
+      <td>1st Semester, AY 2026–2027</td>
+    </tr>
+  </tbody>
+</table>
+<h3>Objective</h3><p>To understand and implement histogram equalization to enhance image contrast, compare global histogram equalization against linear contrast stretching and Contrast Limited Adaptive Histogram Equalization (CLAHE), and analyze intensity histograms, Cumulative Distribution Functions (CDFs), and noise amplification.</p>
+<h3>Algorithms &amp; Procedure</h3><ol>
+<li>Load the low-contrast grayscale sample (assets/samples/lab3_low_contrast.png) and low-contrast color sample (assets/samples/lab3_color_low_contrast.png).</li>
+<li>Apply **Global Histogram Equalization** via cv2.equalizeHist() on grayscale, or convert color BGR images to YUV (cv2.COLOR_BGR2YUV), equalize only the luminance Y channel, and convert back to BGR so chromaticity (U, V) stays undistorted.</li>
+<li>Apply **Linear Contrast Stretching** by mapping the [2nd, 98th] intensity percentiles linearly across [0, 255] with configurable gain α and bias β (I_out = α·I_in + β).</li>
+<li>Apply **CLAHE** via cv2.createCLAHE(clipLimit=2.5, tileGridSize=(8, 8)) to equalize localized contextual tiles while limiting histogram peak clipping.</li>
+<li>Plot 256-bin histograms and normalized CDF curves beneath all four output versions and compute Mean Luminance, Contrast (Std Dev), Dynamic Range, and Shannon Entropy.</li>
+</ol>
+<div class='callout'>&gt; **[PASTE WEB UI SCREENSHOT HERE: Lab 3 – Navigate to &#x27;Lab 3: Histogram Equalization &amp; Contrast&#x27; tab and capture the 4 side-by-side enhanced images (Original, Global Hist Eq, Linear Stretch, CLAHE), the 4-panel Histogram + CDF plot, and the Metrics Table]**</div>
+<h3>Results &amp; Observations</h3><p>On the low-contrast grayscale image (`[43, 175]` initial intensity range), Global Histogram Equalization spread intensities across `[0, 255]` and boosted standard deviation sharply, while Linear Stretching preserved smooth midtone gradients. CLAHE (`clipLimit=2.5`, `8×8` tiles) recovered local coin surface markings across both dimly lit and brighter corners without over-saturating flat background regions or blowing up sensor noise. In Color (YUV) mode, equalizing `Y` restored vibrant cup contrast without shifting color hue.</p>
+<p><strong>Lab 3 Quantitative Metrics (Grayscale Mode)</strong></p>
+<table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Method</th>
+      <th>Mean Luminance</th>
+      <th>Contrast (Std Dev)</th>
+      <th>Min–Max Range</th>
+      <th>Entropy (bits/px)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Original</td>
+      <td>88.80</td>
+      <td>15.85</td>
+      <td>[62, 144]</td>
+      <td>5.677</td>
+    </tr>
+    <tr>
+      <td>Global Hist Eq</td>
+      <td>130.54</td>
+      <td>72.39</td>
+      <td>[0, 255]</td>
+      <td>5.653</td>
+    </tr>
+    <tr>
+      <td>Linear Stretch</td>
+      <td>91.06</td>
+      <td>72.46</td>
+      <td>[0, 255]</td>
+      <td>5.556</td>
+    </tr>
+    <tr>
+      <td>CLAHE</td>
+      <td>94.19</td>
+      <td>33.20</td>
+      <td>[33, 197]</td>
+      <td>6.821</td>
+    </tr>
+  </tbody>
+</table>
+<p><strong>Lab 3 Quantitative Metrics (Color YUV Mode)</strong></p>
+<table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Method</th>
+      <th>Mean Luminance</th>
+      <th>Contrast (Std Dev)</th>
+      <th>Min–Max Range</th>
+      <th>Entropy (bits/px)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Original</td>
+      <td>104.84</td>
+      <td>20.92</td>
+      <td>[68, 159]</td>
+      <td>6.197</td>
+    </tr>
+    <tr>
+      <td>Global Hist Eq</td>
+      <td>129.48</td>
+      <td>73.33</td>
+      <td>[0, 255]</td>
+      <td>6.168</td>
+    </tr>
+    <tr>
+      <td>Linear Stretch</td>
+      <td>104.68</td>
+      <td>64.68</td>
+      <td>[0, 255]</td>
+      <td>6.130</td>
+    </tr>
+    <tr>
+      <td>CLAHE</td>
+      <td>109.56</td>
+      <td>34.55</td>
+      <td>[32, 213]</td>
+      <td>7.073</td>
+    </tr>
+  </tbody>
+</table>
+<figure><img src='assets/report_figures/lab3_gray_summary.png' alt='Lab 3 Visual Comparison (Grayscale)'><figcaption>Lab 3 Visual Comparison (Grayscale)</figcaption></figure>
+<figure><img src='assets/report_figures/lab3_hist_cdf.png' alt='Lab 3 Intensity Histograms &amp; CDF Curves'><figcaption>Lab 3 Intensity Histograms &amp; CDF Curves</figcaption></figure>
+<h3>Post-Lab Questions &amp; Answers</h3>
+<p><strong>1. What is histogram equalization?</strong></p><p>Histogram equalization is a non-linear point-processing intensity transformation that redistributes pixel brightness values so the resulting image histogram spans the entire available dynamic range `[0, 255]` as uniformly as possible.</p>
+<p><strong>2. Why do we need histogram equalization?</strong></p><p>Under-exposed, over-exposed, hazy, or poorly lit images often confine pixel intensities to a narrow gray band, hiding structural details. Equalization expands contrast automatically, improving human readability and boosting the reliability of downstream edge detectors, feature extractors, and classifiers.</p>
+<p><strong>3. How does histogram equalization work mathematically?</strong></p><p>Given an 8-bit image with `N` pixels and normalized intensity probabilities `p(r_k) = n_k / N`, the **Cumulative Distribution Function (CDF)** is `CDF(r_k) = Σ_{j=0}^{k} p(r_j)`. Each input gray level `r_k` is mapped to `s_k = round(255 × CDF(r_k))`. Regions with dense pixel populations produce steep CDF slopes and are stretched across wide output intervals, whereas sparse intensity ranges are compressed.</p>
+<p><strong>4. How does CLAHE work?</strong></p><p>Contrast Limited Adaptive Histogram Equalization (CLAHE) divides the image into a grid of small tiles (e.g., `8×8`). Within each tile, histogram bins exceeding `clipLimit` are clipped and their excess pixel counts are redistributed uniformly across all 256 bins before computing the local CDF—capping maximum contrast amplification to suppress background noise. Adjacent tiles are then blended via bilinear interpolation to remove artificial tile seams.</p>
+<p><strong>5. What are real-world applications for histogram equalization?</strong></p><p>Medical radiography (enhancing subtle fractures in chest X-rays, mammograms, and CT slices), satellite/aerial imagery (penetrating atmospheric haze to map terrain and coastlines), and night-time/tunnel autonomous driving and security cameras (recovering pedestrian and obstacle contrast in low-light frames).</p>
+<p><strong>Observations on Detail Visibility &amp; Noise Amplification:</strong></p><p>Global histogram equalization boosts overall contrast drastically but amplifies random background grain in uniform regions where histogram spikes create very steep CDF slopes. CLAHE resolves this trade-off by adapting locally to uneven illumination while bounding noise amplification via `clipLimit`.</p>
+<h3>Conclusion</h3><p>Global histogram equalization, linear contrast stretching, and CLAHE each manipulate intensity distributions differently; applying equalization selectively on luminance (`Y` in YUV) preserves natural color fidelity, and CLAHE provides the strongest local detail enhancement with controlled noise amplification on unevenly illuminated imagery.</p>
+</section>
+<section class='lab-section'>
+<h2>Laboratory Activity 4: SURF, SIFT, and ORB Feature Detection &amp; Matching</h2>
+<table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Field</th>
+      <th>Details</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Course</td>
+      <td>CSST106: Computer Vision and Perception</td>
+    </tr>
+    <tr>
+      <td>Laboratory Activity</td>
+      <td>Lab Exercise No. 4 – SURF Feature Detection in Python using OpenCV</td>
+    </tr>
+    <tr>
+      <td>Week Number</td>
+      <td>Week 6</td>
+    </tr>
+    <tr>
+      <td>Term / Academic Year</td>
+      <td>1st Semester, AY 2026–2027</td>
+    </tr>
+  </tbody>
+</table>
+<h3>Objective</h3><p>To understand and implement SURF (Speeded-Up Robust Features) keypoint detection and descriptor extraction in OpenCV, visualize rich keypoints with scale and orientation, perform cross-image feature matching using Lowe&#x27;s ratio test, explore upright U-SURF mode, and benchmark SURF against SIFT and ORB.</p>
+<h3>Algorithms &amp; Procedure</h3><ol>
+<li>Load the reference object (assets/samples/lab4_object_ref.png) and rotated (-22°), scaled (0.88×) cluttered target scene (assets/samples/lab4_scene_target.png) in grayscale.</li>
+<li>Invoke the safe SURF detector factory (detect_and_compute_surf) which attempts cv2.xfeatures2d.SURF_create(hessianThreshold=400, upright=...) and automatically falls back to a calibrated Multi-Scale Determinant-of-Hessian (DoH) + 64-D Haar Wavelet descriptor when OpenCV PyPI builds exclude patented non-free binaries.</li>
+<li>Draw keypoints with cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS to inspect circle scale radii and orientation arrows.</li>
+<li>Match descriptors between reference and scene images using cv2.BFMatcher + Lowe&#x27;s Ratio Test (0.75) and visualize matches via cv2.drawMatches.</li>
+<li>Benchmark Standard SURF, U-SURF (upright=True), SIFT (cv2.SIFT_create()), and ORB (cv2.ORB_create()) across keypoint count, detection/matching time (ms), and good match count.</li>
+</ol>
+<div class='callout'>&gt; **[PASTE WEB UI SCREENSHOT HERE: Lab 4 – Navigate to &#x27;Lab 4: SURF, SIFT &amp; ORB Features&#x27; tab and capture the Rich Keypoints on Ref/Scene, Feature Matches tabs (SURF/SIFT/ORB), and the Benchmark Comparison Table]**</div>
+<h3>Results &amp; Observations</h3><p>Active SURF backend (`DoH + 64-D Haar Wavelet SURF Fallback (Non-free module excluded in PyPI wheel)`) detected `450` keypoints on the reference object and `542` keypoints on the cluttered target scene at `hessianThreshold=400`. Rotation-invariant SURF yielded `55` good Lowe-ratio matches across the `-22°` rotation and `0.88×` scale shift, while U-SURF skipped orientation estimation for faster extraction at the cost of lower rotation invariance. SIFT achieved dense high-accuracy matching, and ORB executed fastest using 256-bit binary descriptors.</p>
+<p><strong>Lab 4 SURF vs. U-SURF vs. SIFT vs. ORB Benchmark</strong></p>
+<table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Algorithm</th>
+      <th>Keypoints (Ref)</th>
+      <th>Keypoints (Scene)</th>
+      <th>Descriptor Type</th>
+      <th>Detect+Compute (ms)</th>
+      <th>Match Time (ms)</th>
+      <th>Good Matches</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>SURF (Rotation-Invariant)</td>
+      <td>450</td>
+      <td>542</td>
+      <td>64-D Float32 (Haar)</td>
+      <td>61.48</td>
+      <td>2.81</td>
+      <td>55</td>
+    </tr>
+    <tr>
+      <td>U-SURF (Upright)</td>
+      <td>450</td>
+      <td>542</td>
+      <td>64-D Float32 (Haar)</td>
+      <td>54.42</td>
+      <td>2.81</td>
+      <td>9</td>
+    </tr>
+    <tr>
+      <td>SIFT</td>
+      <td>247</td>
+      <td>784</td>
+      <td>128-D Float32 (DoG)</td>
+      <td>77.59</td>
+      <td>11.77</td>
+      <td>143</td>
+    </tr>
+    <tr>
+      <td>ORB</td>
+      <td>600</td>
+      <td>1000</td>
+      <td>256-bit Binary (BRIEF)</td>
+      <td>938.04</td>
+      <td>5.95</td>
+      <td>177</td>
+    </tr>
+  </tbody>
+</table>
+<figure><img src='assets/report_figures/lab4_summary.png' alt='Lab 4 Rich Keypoints and Cross-Image Feature Matching'><figcaption>Lab 4 Rich Keypoints and Cross-Image Feature Matching</figcaption></figure>
+<h3>Post-Lab Questions &amp; Answers</h3>
+<p><strong>1. What effect does changing the Hessian threshold have on the number of detected keypoints?</strong></p><p>The `hessianThreshold` acts as a minimum Determinant-of-Hessian saliency cutoff. **Increasing the Hessian threshold substantially reduces the number of detected keypoints**, filtering out subtle textures and weak blobs so only the strongest, most stable landmarks survive. Decreasing the threshold increases keypoint density for low-texture regions but introduces more noise and redundant matches.</p>
+<p><strong>2. What are the descriptors in SURF used for, and why are they important?</strong></p><p>Each SURF descriptor is a normalized **64-element vector** constructed from Haar wavelet intensity responses `[Σ dx, Σ dy, Σ |dx|, Σ |dy|]` across a `4×4` oriented grid centered on the keypoint. Descriptors encode local appearance in a scale-, rotation-, and illumination-invariant signature, making it possible to reliably match identical physical points across different viewpoints for object recognition, panorama stitching, AR tracking, and 3D reconstruction.</p>
+<p><strong>3. How does SURF compare to SIFT and ORB in feature detection and speed?</strong></p><p>**SIFT** (Difference-of-Gaussians + 128-D float descriptor) achieves the highest accuracy under large scale and perspective changes, at the highest computational cost. **SURF** (Determinant-of-Hessian box approximations on integral images + 64-D Haar descriptor) is faster than SIFT with comparable repeatability, though patented for commercial deployment. **ORB** (FAST corner detector + rotated BRIEF 256-bit binary descriptor) is patent-free and orders of magnitude faster via Hamming XOR matching, making it ideal for real-time embedded/SLAM pipelines despite weaker scale invariance than SIFT/SURF.</p>
+<h3>Conclusion</h3><p>Local invariant feature detectors and descriptors enable robust correspondence matching even under geometric rotation, scaling, and cluttered backgrounds, with SURF balancing speed and robustness, SIFT maximizing precision, and ORB providing real-time binary efficiency.</p>
+</section>
+<section class='lab-section'>
+<h2>Laboratory Activity 5: Facial Recognition using Principal Component Analysis (Eigenfaces)</h2>
+<table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Field</th>
+      <th>Details</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Course</td>
+      <td>CSST106: Computer Vision and Perception</td>
+    </tr>
+    <tr>
+      <td>Laboratory Activity</td>
+      <td>Lab Exercise No. 5 – PCA Dimensionality Reduction &amp; Eigenfaces</td>
+    </tr>
+    <tr>
+      <td>Week Number</td>
+      <td>Week 7 – 8</td>
+    </tr>
+    <tr>
+      <td>Term / Academic Year</td>
+      <td>1st Semester, AY 2026–2027</td>
+    </tr>
+  </tbody>
+</table>
+<h3>Objective</h3><p>To load and flatten high-dimensional facial image data, apply randomized Principal Component Analysis (PCA) to extract Eigenfaces, quantify the trade-off between retained components and Cumulative Explained Variance (≥ 90%), and train an RBF Support Vector Machine (SVM) classifier in the reduced PCA projection space.</p>
+<h3>Algorithms &amp; Procedure</h3><ol>
+<li>**Task 1 (Data Acquisition):** Load the Labeled Faces in the Wild (LFW) subset via fetch_lfw_people(min_faces_per_person=70, resize=0.4) (1288 images, 50×37 pixels = 1850 features across 7 classes) and perform an 80/20 stratified-random split (test_size=0.2, random_state=42).</li>
+<li>**Task 2 (Computing PCA):** Initialize PCA(n_components=150, svd_solver=&#x27;randomized&#x27;, whiten=True, random_state=42), fit strictly on X_train to prevent data leakage, and project both X_train and X_test into the 150-D Eigenface space.</li>
+<li>**Task 3 (Visualizing Eigenfaces):** Reshape pca.components_ back to (150, 50, 37) and plot the first 12 Eigenfaces plus a direct side-by-side comparison of the First 3 vs. Last 3 Eigenfaces.</li>
+<li>**Task 4 (SVM Classification):** Fit SVC(kernel=&#x27;rbf&#x27;, class_weight=&#x27;balanced&#x27;, random_state=42) on (X_train_pca, y_train), evaluate predictions on X_test_pca with classification_report and Confusion Matrix, plot Cumulative Explained Variance with the 90% threshold marker, and programmatically extract misclassified test faces.</li>
+</ol>
+<div class='callout'>&gt; **[PASTE WEB UI SCREENSHOT HERE: Lab 5 – Navigate to &#x27;Lab 5: PCA Eigenfaces &amp; SVM&#x27; tab and capture the First 12 Eigenfaces Gallery, First 3 vs. Last 3 Eigenfaces, Confusion Matrix, Cumulative Explained Variance Plot (showing k90), and Programmatic Misclassified Faces Gallery]**</div>
+<h3>Results &amp; Observations</h3><p>Compressing `1850` pixel features down to `150` whitened PCA components (`91.9%` dimensionality reduction) retained `94.56%` of facial variance in `0.111s`. Programmatic variance analysis determined that exact **`85` components** suffice to preserve `≥ 90%` variance. The RBF SVM achieved **`84.88%` test accuracy** (`219/258` correct) in `0.083s`.</p>
+<p><strong>Lab 5 Eigenfaces &amp; SVM Quantitative Summary</strong></p>
+<table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Metric</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Dataset Total Samples</td>
+      <td>1288</td>
+    </tr>
+    <tr>
+      <td>Image Dimensions &amp; Features</td>
+      <td>50×37 (1850 features)</td>
+    </tr>
+    <tr>
+      <td>Number of Classes</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <td>Train / Test Split (80% / 20%)</td>
+      <td>1030 train / 258 test</td>
+    </tr>
+    <tr>
+      <td>PCA Components &amp; Whitening</td>
+      <td>n_components=150, whiten=True</td>
+    </tr>
+    <tr>
+      <td>Components for ≥ 90% Variance (k90)</td>
+      <td>85 components</td>
+    </tr>
+    <tr>
+      <td>Variance Retained at 150 Components</td>
+      <td>94.56%</td>
+    </tr>
+    <tr>
+      <td>RBF SVM Test Accuracy</td>
+      <td>84.88%</td>
+    </tr>
+    <tr>
+      <td>Misclassified Test Samples</td>
+      <td>39 / 258</td>
+    </tr>
+  </tbody>
+</table>
+<figure><img src='assets/report_figures/lab5_eigenfaces.png' alt='Lab 5 First 12 Eigenfaces Gallery'><figcaption>Lab 5 First 12 Eigenfaces Gallery</figcaption></figure>
+<figure><img src='assets/report_figures/lab5_first_vs_last.png' alt='Lab 5 First 3 vs. Last 3 Eigenfaces'><figcaption>Lab 5 First 3 vs. Last 3 Eigenfaces</figcaption></figure>
+<figure><img src='assets/report_figures/lab5_variance.png' alt='Lab 5 Cumulative Explained Variance Curve (90% Threshold)'><figcaption>Lab 5 Cumulative Explained Variance Curve (90% Threshold)</figcaption></figure>
+<figure><img src='assets/report_figures/lab5_cm.png' alt='Lab 5 RBF SVM Confusion Matrix'><figcaption>Lab 5 RBF SVM Confusion Matrix</figcaption></figure>
+<figure><img src='assets/report_figures/lab5_failures.png' alt='Lab 5 Programmatic Failure Analysis (Misclassified Faces)'><figcaption>Lab 5 Programmatic Failure Analysis (Misclassified Faces)</figcaption></figure>
+<h3>Post-Lab Questions &amp; Answers</h3>
+<p><strong>Post-Lab Q1 — Dimensionality vs. Variance: How many components are required to retain 90% of the variance?</strong></p><p>Programmatic evaluation of `np.cumsum(pca.explained_variance_ratio_) ≥ 0.90` confirms that **`85` principal components** are required to retain at least **90%** of the total dataset variance (out of `1850` raw pixel dimensions, representing over a `95.4%` feature compression).</p>
+<p><strong>Post-Lab Q2 — Visual Interpretation: What do the first 3 Eigenfaces capture vs. the last 3 Eigenfaces?</strong></p><p>The **first 3 Eigenfaces (0, 1, 2)** exhibit smooth, recognizable low-frequency facial structures corresponding to dominant global variations: overall ambient brightness, left-to-right directional illumination gradients, jawline/oval contour, and eye-socket/nose-bridge symmetry. Conversely, the **last 3 Eigenfaces (147, 148, 149)** correspond to tiny trailing eigenvalues and appear as speckled, grainy **high-frequency spatial patterns** capturing localized background noise, hair edges, and minor pixel misalignments rather than global facial identity.</p>
+<p><strong>Post-Lab Q3 — The Importance of Whitening: What does whiten=True do mathematically and why does it help an SVM?</strong></p><p>Standard PCA yields uncorrelated features `z_i = u_i^T (x - μ)` whose variance equals eigenvalue `λ_i` (`Var(z_i) = λ_i`). Because early lighting components have huge `λ_i` compared to subtle identity components (`i &gt; 15`), raw PCA features are severely anisotropic. Setting `whiten=True` divides every component by `√λ_i` (`z_white,i = z_i / √λ_i`), scaling every projected dimension to **unit variance (`Cov = I`)**. Since an RBF SVM relies on isotropic Euclidean distances inside `K(a, b) = exp(-γ ||a - b||²)`, whitening prevents high-variance illumination components from dominating the decision kernel and allows finer discriminative Eigenfaces to contribute equally.</p>
+<p><strong>Post-Lab Q4 — Programmatic Failure Analysis: Why did the Eigenface SVM misclassify specific test faces?</strong></p><p>Extracting `np.where(y_pred != y_test)` identified `39` misclassified portraits. Visual inspection indicates four primary computer-vision failure modes: (1) **strong directional shadows / specular glare** distorting pixel intensities along lighting eigenmodes, (2) **out-of-plane head yaw/tilt** misaligning eyes and mouths from frontal templates, (3) **partial occlusions** (eyeglasses, microphones, extreme expressions), and (4) **class imbalance** (George W. Bush has 530 samples vs. ~71–144 for smaller classes), biasing borderline test projections.</p>
+<p><strong>Follow-Up Q1 — Why is dimensionality reduction important in computer vision?</strong></p><p>Raw images live in massive correlated spaces (`1850` dimensions even at `50×37`). Reducing dimensionality mitigates the curse of dimensionality, eliminates redundant pixel noise, accelerates training and inference, cuts storage overhead, and reduces classifier overfitting on limited datasets.</p>
+<p><strong>Follow-Up Q2 — What is the difference between the first principal component and the second principal component?</strong></p><p>PC1 is the eigenvector of the data covariance matrix pointing along the single axis of **maximum global variance** in the centered faces, whereas PC2 is constrained to be **orthogonal (90° perpendicular)** to PC1 while capturing the **maximum remaining variance**.</p>
+<p><strong>Follow-Up Q3 — If PCA reduces an image from 1,000 features to 100 components, what information might be lost?</strong></p><p>The discarded 900 trailing eigenvectors contain **high-frequency spatial details** — sharp edges, fine skin pores, subtle wrinkles, eyelashes, micro-expressions, and sensor noise — resulting in slightly smoother reconstructions.</p>
+<p><strong>Follow-Up Q4 — How can PCA be applied to face recognition?</strong></p><p>By subtracting the average face `μ`, projecting training faces onto the top `k` Eigenfaces (`z = W^T (x - μ)`), and classifying query faces in that compact `k`-dimensional coordinate space using distance matching or an SVM classifier.</p>
+<p><strong>Follow-Up Q5 — Why should image features generally be centered before applying PCA?</strong></p><p>PCA solves for orthogonal variance axes passing through the origin. Without zero-centering (`x - μ`), PC1 is pulled directly toward the non-zero **mean brightness vector `μ`** instead of capturing genuine structural deviations among individuals.</p>
+<h3>Conclusion</h3><p>Randomized PCA successfully compresses high-dimensional facial images by over 91% into orthogonal Eigenfaces while preserving ~95% of variance; pairing whitened PCA projections with a balanced RBF SVM achieves strong facial recognition accuracy while exposing classical linear-template limitations under lighting, pose, and occlusion shifts.</p>
+</section>
+<section class='lab-section'>
+<h2>Laboratory Activity 6 (Manual Lab 5/6): Object Detection with YOLOv11</h2>
+<table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Field</th>
+      <th>Details</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Course</td>
+      <td>CSST106: Computer Vision and Perception</td>
+    </tr>
+    <tr>
+      <td>Laboratory Activity</td>
+      <td>Lab Exercise No. 6 (Manual Lab 5/6) – YOLOV11 Object Detection</td>
+    </tr>
+    <tr>
+      <td>Week Number</td>
+      <td>Week 8 – 9</td>
+    </tr>
+    <tr>
+      <td>Term / Academic Year</td>
+      <td>1st Semester, AY 2026–2027</td>
+    </tr>
+  </tbody>
+</table>
+<h3>Objective</h3><p>To understand and execute real-time object detection using pre-trained YOLOv11 (`yolo11n.pt`), prepare and verify a custom YOLO-format dataset (`images/`, `labels/`, and `data.yaml`), fine-tune YOLOv11n on custom classes, and interpret validation metrics (Precision, Recall, mAP@50, and mAP@50-95).</p>
+<h3>Algorithms &amp; Procedure</h3><ol>
+<li>**Part 1 (Pre-trained Inference):** Load YOLO(&#x27;yolo11n.pt&#x27;) (YOLOv11n) and run inference on the bundled multi-object scene (assets/samples/lab6_street_scene.png), uploaded images, videos, or live webcam snapshots with interactive Confidence (0.25) and IoU NMS (0.45) thresholds.</li>
+<li>**Part 2 (Custom Dataset &amp; Annotations):** Generate and inspect assets/custom_yolo_dataset/ organized into images/train (8 images), images/val (4 images), labels/train, labels/val, and data.yaml (nc: 3, names: [&#x27;person&#x27;, &#x27;cat&#x27;, &#x27;cup&#x27;]), verifying normalized [class_id x_center y_center width height] bounding boxes.</li>
+<li>**Part 3 &amp; 4 (Training, Validation &amp; Evaluation):** Fine-tune YOLO(&#x27;yolo11n.pt&#x27;).train(data=..., epochs=..., imgsz=...) on the custom dataset and evaluate using model.val(), reporting Precision, Recall, mAP@50, and mAP@50-95.</li>
+</ol>
+<div class='callout'>&gt; **[PASTE WEB UI SCREENSHOT HERE: Lab 6 – Navigate to &#x27;Lab 6: YOLOv11 Object Detection&#x27; tab and capture Part 1 Annotated Bounding Boxes + Detection Table, Part 2 Ground-Truth Annotation Explorer, and Part 3/4 Training/Validation Metrics]**</div>
+<h3>Results &amp; Observations</h3><p>Pre-trained `YOLOv11n` detected `4` objects (`cat`, `person`, `cup`, `dining table`) on the bundled natural scene in `112.6 ms` at `conf=0.25`. Custom fine-tuning on the 3-class dataset achieved Precision `0.6399`, Recall `0.6667`, mAP@50 `0.7654`, and mAP@50-95 `0.4491` during `model.val()`.</p>
+<p><strong>Lab 6 Part 1 Detections on Default Scene</strong></p>
+<table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Detection #</th>
+      <th>Class</th>
+      <th>Confidence</th>
+      <th>x1</th>
+      <th>y1</th>
+      <th>x2</th>
+      <th>y2</th>
+      <th>Box Size (W×H)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>cat</td>
+      <td>0.908</td>
+      <td>341.0</td>
+      <td>105.7</td>
+      <td>607.4</td>
+      <td>314.8</td>
+      <td>266×209</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>person</td>
+      <td>0.883</td>
+      <td>26.7</td>
+      <td>68.8</td>
+      <td>232.3</td>
+      <td>358.1</td>
+      <td>206×289</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>cup</td>
+      <td>0.855</td>
+      <td>735.8</td>
+      <td>113.6</td>
+      <td>860.6</td>
+      <td>233.0</td>
+      <td>125×119</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>dining table</td>
+      <td>0.721</td>
+      <td>650.2</td>
+      <td>105.4</td>
+      <td>950.7</td>
+      <td>311.4</td>
+      <td>300×206</td>
+    </tr>
+  </tbody>
+</table>
+<p><strong>Lab 6 End-to-End Inference, Training &amp; Validation Summary</strong></p>
+<table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Stage</th>
+      <th>Metric</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Part 1 Pre-trained Inference (YOLOv11n)</td>
+      <td>Detections &amp; Latency</td>
+      <td>4 objects in 112.6 ms</td>
+    </tr>
+    <tr>
+      <td>Part 3 Custom Training (3 epochs, imgsz=320)</td>
+      <td>Precision (B)</td>
+      <td>0.6399</td>
+    </tr>
+    <tr>
+      <td>Part 4 Validation (model.val)</td>
+      <td>Recall (B)</td>
+      <td>0.6667</td>
+    </tr>
+    <tr>
+      <td>Part 4 Validation (model.val)</td>
+      <td>mAP@50 (B)</td>
+      <td>0.7654</td>
+    </tr>
+    <tr>
+      <td>Part 4 Validation (model.val)</td>
+      <td>mAP@50-95 (B)</td>
+      <td>0.4491</td>
+    </tr>
+  </tbody>
+</table>
+<figure><img src='assets/report_figures/lab6_summary.png' alt='Lab 6 YOLOv11n Inference &amp; Custom Dataset Verification'><figcaption>Lab 6 YOLOv11n Inference &amp; Custom Dataset Verification</figcaption></figure>
+<h3>Post-Lab Questions &amp; Answers</h3>
+<p><strong>1. What is object detection in computer vision, and how does it differ from image classification? Explain using a real-world example.</strong></p><p>**Image Classification** assigns a single holistic category label to an entire image (e.g., predicting `&#x27;cat&#x27;` for a whole photo), providing no coordinates and failing when multiple items appear together. **Object Detection** performs both **spatial localization** (regressing tight bounding boxes `[x1, y1, x2, y2]`) and **multi-object classification** with per-instance confidence scores across every object present in the frame. For example, in an **autonomous vehicle&#x27;s forward camera**, image classification could only output `&#x27;street&#x27;`, which cannot guide steering or braking; YOLOv11 object detection simultaneously locates a `pedestrian` at `(460, 185, 515, 360)`, a `car` ahead at `(120, 210, 310, 340)`, and an overhead `traffic light` — enabling exact distance estimation and collision avoidance. Similarly, in an **automated retail checkout system**, object detection locates and counts multiple individual items (`cup`, `bottle`, `apple`) on a tray simultaneously.</p>
+<h3>Conclusion</h3><p>YOLOv11n delivers fast, single-stage multi-object localization and classification out of the box and adapts seamlessly to domain-specific classes via standardized normalized bounding-box annotations, `data.yaml` configuration, transfer learning, and mAP validation.</p>
+</section>
+<section class='lab-section'>
+<h2>Laboratory Activity 7 (Manual Lab 6): Image Segmentation Techniques</h2>
+<table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Field</th>
+      <th>Details</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Course</td>
+      <td>CSST106: Computer Vision and Perception</td>
+    </tr>
+    <tr>
+      <td>Laboratory Activity</td>
+      <td>Lab Exercise No. 7 (Manual Lab 6) – Segmentation Technique</td>
+    </tr>
+    <tr>
+      <td>Week Number</td>
+      <td>Week 13</td>
+    </tr>
+    <tr>
+      <td>Term / Academic Year</td>
+      <td>1st Semester, AY 2026–2027</td>
+    </tr>
+  </tbody>
+</table>
+<h3>Objective</h3><p>To understand and apply four major image segmentation methods — Thresholding (Global Otsu &amp; Adaptive), Region-Based (Region Growing &amp; Watershed), Edge-Based (Canny + Closed Contours), and Deep Semantic Segmentation (DeepLabV3) — and evaluate their qualitative separation quality and quantitative IoU performance.</p>
+<h3>Algorithms &amp; Procedure</h3><ol>
+<li>**Thresholding Segmentation:** Load the unevenly illuminated touching-coins test image (assets/samples/lab7_coins_touching.png) in grayscale and apply Global Otsu thresholding (cv2.THRESH_OTSU) alongside Adaptive Mean and Adaptive Gaussian thresholding (blockSize=105, C=-12).</li>
+<li>**Region-Based Segmentation:** Run interactive 8-connected Region Growing from seed (105, 110) with tolerance τ=35, then apply the Watershed algorithm (cv2.watershed) using morphological opening, Euclidean Distance Transform (cv2.distanceTransform), sure foreground/background markers, and boundary delineation (markers == -1).</li>
+<li>**Edge-Based Segmentation:** Extract edges with Canny (60, 150), bridge small gaps using elliptical morphological closing (7×7), and detect/fill closed external contours (cv2.findContours + cv2.drawContours).</li>
+<li>**Semantic Segmentation:** Execute pre-trained PyTorch deeplabv3_mobilenet_v3_large (DeepLabV3_MobileNet_V3_Large_Weights.DEFAULT) on assets/samples/lab7_semantic_scene.png, render the color-coded PASCAL VOC pixel mask overlay, and compute IoU, Dice, Pixel Accuracy, and latency across methods.</li>
+</ol>
+<div class='callout'>&gt; **[PASTE WEB UI SCREENSHOT HERE: Lab 7 – Navigate to &#x27;Lab 7: Image Segmentation Techniques&#x27; tab and capture BOTH tabs: (1) Thresholding, Region Growing, Watershed, Edge-Based + IoU Table, and (2) DeepLabV3 Semantic Mask, Overlay, and Class Color Legend]**</div>
+<h3>Results &amp; Observations</h3><p>On the unevenly illuminated touching-coins scene, Global Otsu selected threshold `T = 144.0` but merged adjacent touching coins into unified blobs. Adaptive Gaussian handled spatial shading better locally, single-seed Region Growing isolated the target coin cleanly around `(105, 110)`, and **Watershed separated all `7` distinct coin regions** with clean boundary ridges (`markers == -1`) while achieving strong foreground IoU against ground truth. On the complex natural scene, **DeepLabV3-MobileNetV3-Large** classified every pixel into `4` PASCAL VOC semantic labels in `403.9 ms`.</p>
+<p><strong>Lab 7 Classical Segmentation Quantitative Benchmark (IoU vs. Ground Truth)</strong></p>
+<table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Method</th>
+      <th>IoU vs Ground-Truth Mask</th>
+      <th>Dice (F1)</th>
+      <th>Pixel Accuracy</th>
+      <th>Foreground (%)</th>
+      <th>Time (ms)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Global Otsu Thresholding</td>
+      <td>0.9915</td>
+      <td>0.9957</td>
+      <td>0.9980</td>
+      <td>23.35</td>
+      <td>0.16</td>
+    </tr>
+    <tr>
+      <td>Adaptive Gaussian Thresholding</td>
+      <td>0.8336</td>
+      <td>0.9093</td>
+      <td>0.9609</td>
+      <td>19.58</td>
+      <td>4.69</td>
+    </tr>
+    <tr>
+      <td>Adaptive Mean Thresholding</td>
+      <td>0.9917</td>
+      <td>0.9959</td>
+      <td>0.9981</td>
+      <td>23.29</td>
+      <td>4.69</td>
+    </tr>
+    <tr>
+      <td>Region Growing (Single Seed)</td>
+      <td>0.2023</td>
+      <td>0.3366</td>
+      <td>0.8127</td>
+      <td>4.75</td>
+      <td>1.85</td>
+    </tr>
+    <tr>
+      <td>Watershed Algorithm (Touching Objects)</td>
+      <td>0.9682</td>
+      <td>0.9838</td>
+      <td>0.9925</td>
+      <td>22.74</td>
+      <td>3.70</td>
+    </tr>
+    <tr>
+      <td>Edge-Based (Canny + Closed Contours)</td>
+      <td>0.9772</td>
+      <td>0.9885</td>
+      <td>0.9945</td>
+      <td>24.03</td>
+      <td>1.35</td>
+    </tr>
+  </tbody>
+</table>
+<p><strong>Lab 7 DeepLabV3 Semantic Class Coverage Legend</strong></p>
+<table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Class ID</th>
+      <th>Class Label</th>
+      <th>RGB Color</th>
+      <th>Pixels</th>
+      <th>Coverage (%)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>__background__</td>
+      <td>rgb(0, 0, 0)</td>
+      <td>187871</td>
+      <td>69.07</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>cat</td>
+      <td>rgb(64, 0, 0)</td>
+      <td>58620</td>
+      <td>21.55</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>bottle</td>
+      <td>rgb(128, 0, 128)</td>
+      <td>21895</td>
+      <td>8.05</td>
+    </tr>
+    <tr>
+      <td>15</td>
+      <td>person</td>
+      <td>rgb(192, 128, 128)</td>
+      <td>3614</td>
+      <td>1.33</td>
+    </tr>
+  </tbody>
+</table>
+<figure><img src='assets/report_figures/lab7_classical.png' alt='Lab 7 Classical Segmentation Methods Comparison'><figcaption>Lab 7 Classical Segmentation Methods Comparison</figcaption></figure>
+<figure><img src='assets/report_figures/lab7_semantic.png' alt='Lab 7 DeepLabV3 Semantic Segmentation Output'><figcaption>Lab 7 DeepLabV3 Semantic Segmentation Output</figcaption></figure>
+<h3>Post-Lab Questions &amp; Answers</h3>
+<p><strong>1. Explain the differences between thresholding, region-based, edge-based, and semantic segmentation techniques. Provide one advantage and one limitation for each method.</strong></p><p>**Thresholding Segmentation** partitions pixels independently by intensity relative to a global (`Otsu`) or local neighborhood (`Adaptive`) threshold. *Advantage:* Extremely fast (`O(N)`) and parameter-light. *Limitation:* Ignores spatial topology and fails when foreground and background brightness overlap or lighting varies severely.
+
+**Region-Based Segmentation (Region Growing &amp; Watershed)** groups spatially connected pixels satisfying intensity homogeneity or partitions topographic distance basins between foreground/background markers. *Advantage:* Produces guaranteed closed regions and Watershed cleanly separates touching objects (e.g., clustered cells or coins). *Limitation:* Sensitive to seed selection and prone to over-segmentation on noisy textures without careful marker filtering.
+
+**Edge-Based Segmentation** detects sharp intensity discontinuities (`Canny`), links gaps morphologically, and fills enclosed contours. *Advantage:* Works well when object borders are crisp even across smoothly varying backgrounds. *Limitation:* Highly sensitive to noise and broken edges; unclosed gaps cause contour-filling leaks and fail to split touching objects.
+
+**Semantic Segmentation (DeepLabV3 / U-Net)** uses deep convolutional encoder-decoders with multi-scale context aggregation to assign a semantic class label to every individual pixel. *Advantage:* Understands high-level object semantics across clutter, shadows, and varied textures. *Limitation:* Computationally heavy, requires large pixel-annotated training datasets, and merges adjacent same-class instances unless extended to instance segmentation.</p>
+<h3>Conclusion</h3><p>Classical thresholding, region-based, and edge-based techniques offer fast, interpretable segmentation when intensity or boundary assumptions hold (with Watershed excelling on touching objects), whereas deep semantic networks like DeepLabV3 unlock accurate pixel-level understanding in complex real-world scenes.</p>
+</section>
+</body></html>
